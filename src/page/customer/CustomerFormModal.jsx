@@ -5,8 +5,13 @@ const EMPTY_CUSTOMER = {
   staff: "Administrator", address: "", note: "", revenue: "---",
 };
 
-export default function CustomerFormModal({ customer, onClose, onSave }) {
-  const data = customer || EMPTY_CUSTOMER;
+export default function CustomerFormModal({ customer, statuses, employees, sources, onClose, onSave }) {
+  const data = customer || {
+    ...EMPTY_CUSTOMER,
+    status: statuses[0]?.name || EMPTY_CUSTOMER.status,
+    source: sources[0]?.name || EMPTY_CUSTOMER.source,
+    staff: employees[0]?.name || EMPTY_CUSTOMER.staff,
+  };
 
   const submit = (event) => {
     event.preventDefault();
@@ -25,10 +30,10 @@ export default function CustomerFormModal({ customer, onClose, onSave }) {
         <div className="crm-form-grid">
           <label>Họ và tên <em>*</em><input name="name" defaultValue={data.name} required placeholder="Ví dụ: Anh Nguyễn Văn A" /></label>
           <label>Số điện thoại<input name="phone" defaultValue={data.phone} placeholder="090..." /></label>
-          <label>Nguồn khách hàng<select name="source" defaultValue={data.source}>{["Facebook","Website","Giới thiệu","Kiot"].map(x => <option key={x}>{x}</option>)}</select></label>
+          <label>Nguồn khách hàng<select name="source" defaultValue={data.source}>{sources.map(source => <option key={source.id} value={source.name}>{source.name}</option>)}</select></label>
           <label>Khu vực<input name="area" defaultValue={data.area} placeholder="Hà Nội, Đà Lạt..." /></label>
-          <label>Trạng thái<select name="status" defaultValue={data.status}>{["Khách hàng mới","Đã gửi thông tin","Đang thuyết phục","Đã gửi báo giá","Đã chốt","Không quan tâm"].map(x => <option key={x}>{x}</option>)}</select></label>
-          <label>Nhân viên phụ trách<select name="staff" defaultValue={data.staff}>{["Administrator","Nhân viên 1","Nhân viên 2","Nhân viên 3"].map(x => <option key={x}>{x}</option>)}</select></label>
+          <label>Trạng thái<select name="status" defaultValue={data.status}>{statuses.map(status => <option key={status.id} value={status.name}>{status.name}</option>)}</select></label>
+          <label>Nhân viên phụ trách<select name="staff" defaultValue={data.staff}>{employees.map(employee => <option key={employee.id} value={employee.name}>{employee.name}</option>)}</select></label>
           <label className="wide">Địa chỉ<input name="address" defaultValue={data.address} placeholder="Địa chỉ khách hàng" /></label>
           <label className="wide">Ghi chú<textarea name="note" defaultValue={data.note} rows="4" placeholder="Nội dung cần lưu ý..." /></label>
         </div>

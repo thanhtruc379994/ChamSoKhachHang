@@ -76,33 +76,40 @@
   flex-shrink: 0;
 }
 
-.crm-page-btn {
-  width: 28px;
-  height: 28px;
+.crm-history-page-btn {
+  box-sizing: border-box;
+  width: 38px;
+  height: 38px;
+  padding: 0;
   border-radius: 999px;
-  border: none;
+  border: 1px solid #1f2937;
   background: #1f2937;
   color: #fff;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex: 0 0 38px;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
-.crm-history-pagination .crm-page-btn svg {
-  width: 18px;
-  height: 18px;
-  stroke-width: 3;
+.crm-history-page-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.75;
 }
 
-.crm-page-btn:hover:not(:disabled) {
+.crm-history-page-btn:hover:not(:disabled) {
   background: #111827;
+  border-color: #111827;
 }
 
-.crm-page-btn:disabled {
-  background: #e5e7eb;
-  color: #9ca3af;
+.crm-history-page-btn:disabled {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #64748b;
   cursor: not-allowed;
+  opacity: 1;
 }
 
 .crm-history-page-label {
