@@ -1,0 +1,427 @@
+.crm-tasks-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ---- Toolbar ---- */
+.crm-tasks-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px 18px;
+}
+
+.crm-tasks-toolbar-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  flex-shrink: 0;
+}
+
+.crm-tasks-date-input {
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #374151;
+  width: 150px;
+}
+
+.crm-tasks-search-input {
+  flex: 1;
+  padding: 9px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #374151;
+}
+
+.crm-tasks-date-input:focus,
+.crm-tasks-search-input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+.crm-add-task-btn {
+  background: #22c55e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.crm-add-task-btn:hover {
+  background: #16a34a;
+}
+
+/* ---- Tabs + pagination bar ---- */
+.crm-tasks-tabbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.crm-tasks-tabs {
+  display: flex;
+  gap: 10px;
+}
+
+.crm-tasks-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.crm-tasks-tab.active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+.crm-tasks-tab-count {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  padding: 1px 9px;
+  font-size: 12px;
+}
+
+.crm-tasks-tab:not(.active) .crm-tasks-tab-count {
+  background: #eef2ff;
+  color: #2563eb;
+}
+
+.crm-tasks-pagination {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.crm-page-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #374151;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.crm-page-btn:hover:not(:disabled) {
+  background: #f3f4f6;
+}
+
+.crm-page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ---- Table ---- */
+.crm-tasks-table-wrap {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: auto;
+}
+
+.crm-tasks-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.crm-tasks-table th {
+  text-align: left;
+  padding: 14px 16px;
+  color: #374151;
+  font-weight: 700;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+.crm-tasks-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f3f4f6;
+  color: #1f2937;
+  vertical-align: middle;
+}
+
+.crm-tasks-table tr:last-child td {
+  border-bottom: none;
+}
+
+.crm-priority-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.crm-priority-badge.urgent {
+  background: #ef4444;
+}
+
+.crm-priority-badge.normal {
+  background: #64748b;
+}
+
+.crm-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.crm-status-pill.waiting {
+  color: #d97706;
+}
+
+.crm-status-pill.done {
+  color: #16a34a;
+}
+
+.crm-task-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.crm-task-action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.crm-task-action-btn.done {
+  color: #16a34a;
+}
+
+.crm-task-action-btn.edit {
+  color: #2563eb;
+}
+
+.crm-task-action-btn.delete {
+  color: #ef4444;
+}
+
+.crm-task-action-btn:hover {
+  opacity: 0.7;
+}
+
+.crm-tasks-empty {
+  padding: 40px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* ---- Confirm modal ---- */
+.crm-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.crm-confirm-modal {
+  background: #fff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 440px;
+  padding: 26px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.crm-confirm-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 16px 0;
+}
+
+.crm-confirm-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #eef2ff;
+  color: #2563eb;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.crm-confirm-text {
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.5;
+  margin: 0 0 22px 0;
+}
+
+.crm-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.crm-btn-cancel {
+  background: #374151;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.crm-btn-cancel:hover {
+  background: #1f2937;
+}
+
+.crm-btn-confirm {
+  background: #22c55e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.crm-btn-confirm:hover {
+  background: #16a34a;
+}
+
+/* ---- Add / edit task modal ---- */
+.crm-task-modal {
+  background: #fff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 520px;
+  padding: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.crm-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.crm-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.crm-modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.crm-modal-close:hover {
+  color: #374151;
+}
+
+.crm-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.crm-form-group {
+  margin-bottom: 14px;
+}
+
+.crm-form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: 6px;
+}
+
+.crm-form-group input,
+.crm-form-group select,
+.crm-form-group textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #1f2937;
+  background: #fff;
+  font-family: inherit;
+}
+
+.crm-form-group textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+.crm-form-group input:focus,
+.crm-form-group select:focus,
+.crm-form-group textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+.crm-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}

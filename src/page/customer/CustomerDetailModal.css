@@ -1,0 +1,430 @@
+.cdm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px;
+  overflow-y: auto;
+  z-index: 1000;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.cdm-modal {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 820px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+/* Header */
+.cdm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.cdm-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cdm-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #4f46e5;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.cdm-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.cdm-id {
+  margin-left: 8px;
+  font-size: 13px;
+  font-weight: 400;
+  color: #9ca3af;
+}
+
+.cdm-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cdm-close-btn {
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  display: flex;
+  padding: 4px;
+  border-radius: 6px;
+}
+.cdm-close-btn:hover { background: #f3f4f6; color: #374151; }
+
+/* Status dropdown in header */
+.cdm-status-wrap {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.cdm-status-select {
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  outline: none;
+  padding-right: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23374151' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0 center;
+}
+
+.cdm-status-wrap.badge-new { background: #f3e8ff; color: #7e22ce; }
+.cdm-status-wrap.badge-sent-info { background: #e0f2fe; color: #0369a1; }
+.cdm-status-wrap.badge-persuading { background: #fef3c7; color: #b45309; }
+.cdm-status-wrap.badge-quoted { background: #cffafe; color: #0e7490; }
+.cdm-status-wrap.badge-closed { background: #d1fae5; color: #047857; }
+
+/* Stats bar */
+.cdm-stats {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 24px;
+  flex-wrap: wrap;
+}
+
+.cdm-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: none;
+  background: transparent;
+  cursor: default;
+  text-align: left;
+  padding: 0;
+}
+
+.cdm-stat-clickable {
+  cursor: pointer;
+}
+.cdm-stat-clickable:hover .cdm-stat-value { text-decoration: underline; }
+
+.cdm-stat-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #9ca3af;
+  text-transform: uppercase;
+}
+
+.cdm-stat-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.cdm-stat-value.revenue { color: #16a34a; }
+
+.cdm-stat-divider {
+  width: 1px;
+  height: 28px;
+  background: #e5e7eb;
+}
+
+/* Cards */
+.cdm-card {
+  margin: 0 24px 16px;
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+
+.cdm-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.cdm-card-title {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #4338ca;
+}
+
+.cdm-card-header .cdm-card-title { margin-bottom: 0; }
+
+.cdm-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 24px;
+}
+
+.cdm-info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #374151;
+}
+
+.cdm-info-item svg { color: #9ca3af; flex-shrink: 0; }
+
+.cdm-info-label {
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+
+.cdm-info-value { color: #111827; }
+
+.cdm-note-box {
+  background: #fef9c3;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #713f12;
+}
+
+/* Add button */
+.cdm-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  background: #22c55e;
+  color: #fff;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cdm-add-btn:hover { background: #16a34a; }
+.cdm-add-btn.small { padding: 4px 10px; font-size: 12px; margin-left: auto; }
+
+/* Table */
+.cdm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.cdm-table th {
+  text-align: left;
+  padding: 8px 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.cdm-table td {
+  padding: 10px 4px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #374151;
+}
+
+.cdm-money { color: #16a34a; font-weight: 700; }
+
+.cdm-row-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.cdm-icon-btn {
+  border: none;
+  border-radius: 6px;
+  padding: 5px;
+  cursor: pointer;
+  display: flex;
+}
+
+.cdm-icon-btn.edit { background: #eff6ff; color: #3b82f6; }
+.cdm-icon-btn.edit:hover { background: #dbeafe; }
+.cdm-icon-btn.delete { background: #fef2f2; color: #ef4444; }
+.cdm-icon-btn.delete:hover { background: #fee2e2; }
+
+.cdm-empty {
+  font-size: 13px;
+  color: #9ca3af;
+  margin: 4px 0;
+}
+
+/* Care history list */
+.cdm-care-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cdm-care-item {
+  background: #fff;
+  border: 1px solid #f1f5f9;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.cdm-care-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.cdm-care-date {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.cdm-care-by {
+  font-weight: 400;
+  color: #9ca3af;
+}
+
+.cdm-care-next {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #d97706;
+}
+
+.cdm-care-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  color: #4b5563;
+}
+
+/* Daily calls side panel */
+.cdm-calls-panel {
+  position: fixed;
+  top: 40px;
+  right: max(20px, calc(50% - 410px - 320px));
+  width: 320px;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+  background: #4f46e5;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+}
+
+.cdm-calls-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 14px;
+}
+
+.cdm-calls-header span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cdm-calls-header .cdm-close-btn { color: #fff; }
+.cdm-calls-header .cdm-close-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+
+.cdm-calls-total {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #e0e7ff;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.cdm-calls-total b { color: #fff; }
+
+.cdm-calls-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cdm-call-item {
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 12px;
+  border-left: 4px solid #4f46e5;
+}
+
+.cdm-call-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 6px;
+}
+
+.cdm-call-today {
+  background: #dcfce7;
+  color: #16a34a;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+.cdm-call-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #4b5563;
+}
+
+@media (max-width: 1180px) {
+  .cdm-calls-panel {
+    position: static;
+    width: 100%;
+    max-width: 820px;
+    margin: 16px auto 0;
+  }
+}
