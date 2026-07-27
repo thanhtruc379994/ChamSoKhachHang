@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import CrmHeader from '../../components/header/CrmHeader';
-import { useIndexedDbState } from '../../data/indexedDb';
+import { updateData, useIndexedDbState, writeData } from '../../data/indexedDb';
+import { DEFAULT_EMPLOYEES, DEFAULT_SOURCES, DEFAULT_STATUSES } from '../../data/crmOptions';
 import './CrmSettings.css';
 
 const IconUsers = () => (
@@ -60,32 +61,10 @@ const IconSave = () => (
 
 const STATUS_COLORS = ['#2563eb', '#ec4899', '#6366f1', '#06b6d4', '#22c55e', '#ef4444', '#f59e0b', '#64748b'];
 
-const initialEmployees = [
-  { id: 1, name: 'Administrator', role: 'Admin', manager: null, username: 'admin', password: '' },
-  { id: 2, name: 'Nhân viên 1', role: 'Nhân viên', manager: null, username: 'nv1', password: 'a123' },
-  { id: 3, name: 'Nhân viên 2', role: 'Nhân viên', manager: 'Nhân viên 1', username: 'nv2', password: 'a123' },
-  { id: 4, name: 'Nhân viên 3', role: 'Nhân viên', manager: 'Nhân viên 2', username: 'nv3', password: 'a124' },
-];
-
-const initialStatuses = [
-  { id: 1, name: 'Khách hàng mới', color: '#2563eb', system: true },
-  { id: 2, name: 'Đã gửi thông tin', color: '#ec4899', system: false },
-  { id: 3, name: 'Đang thuyết phục', color: '#6366f1', system: false },
-  { id: 4, name: 'Đã gửi báo giá', color: '#06b6d4', system: false },
-  { id: 5, name: 'Đã chốt', color: '#22c55e', system: true },
-  { id: 6, name: 'Không quan tâm', color: '#ef4444', system: false },
-];
-
-const initialSources = [
-  { id: 1, name: 'Facebook', desc: 'Khách hàng từ quảng cáo Facebook' },
-  { id: 2, name: 'Website', desc: 'Khách hàng đăng ký từ website' },
-  { id: 3, name: 'Giới thiệu', desc: 'Khách hàng được giới thiệu' },
-];
-
 export default function CrmSettings({ onNavigate, onChangePassword, onLogout }) {
-  const [employees, setEmployees] = useIndexedDbState('employees', initialEmployees);
-  const [statuses, setStatuses] = useIndexedDbState('statuses', initialStatuses);
-  const [sources, setSources] = useIndexedDbState('sources', initialSources);
+  const [employees, setEmployees] = useIndexedDbState('employees', DEFAULT_EMPLOYEES);
+  const [statuses, setStatuses] = useIndexedDbState('statuses', DEFAULT_STATUSES);
+  const [sources, setSources] = useIndexedDbState('sources', DEFAULT_SOURCES);
 
   const [employeeModal, setEmployeeModal] = useState(null); // null | {} (add) | employee (edit)
   const [statusModal, setStatusModal] = useState(null);
@@ -95,30 +74,99 @@ export default function CrmSettings({ onNavigate, onChangePassword, onLogout }) 
   const openAddEmployee = () =>
     setEmployeeModal({ name: '', role: 'Nhân viên', manager: '', username: '', password: '' });
   const openEditEmployee = (emp) => setEmployeeModal({ ...emp });
-  const saveEmployee = () => {
+  const saveEmployee = async () => {
     if (!employeeModal.name || !employeeModal.username) return;
     if (employeeModal.id) {
-      setEmployees((list) => list.map((e) => (e.id === employeeModal.id ? employeeModal : e)));
+      const previous = employees.find((employee) => employee.id === employeeModal.id);
+      const defaultName = DEFAULT_EMPLOYEES.find((employee) => employee.id === employeeModal.id)?.name;
+      const oldNames = [...new Set([
+        ...(previous?.aliases || []),
+        previous?.name,
+        defaultName,
+      ].filter((name) => name && name !== employeeModal.name))];
+      const savedEmployee = oldNames.length
+        ? { ...employeeModal, aliases: oldNames }
+        : employeeModal;
+      const nextEmployees = employees.map((employee) => {
+        if (employee.id === employeeModal.id) return savedEmployee;
+        if (previous && employee.manager === previous.name) {
+          return { ...employee, manager: employeeModal.name };
+        }
+        return employee;
+      });
+      if (oldNames.length) {
+        await Promise.all([
+          writeData('employees', nextEmployees),
+          ...oldNames.flatMap((oldName) => [
+            replaceCustomerField('staff', oldName, employeeModal.name),
+            replaceTaskEmployee(oldName, employeeModal.name),
+          ]),
+        ]);
+      } else {
+        await writeData('employees', nextEmployees);
+      }
     } else {
-      setEmployees((list) => [...list, { ...employeeModal, id: Date.now() }]);
+      await writeData('employees', [...employees, { ...employeeModal, id: Date.now() }]);
     }
     setEmployeeModal(null);
   };
-  const deleteEmployee = (id) => setEmployees((list) => list.filter((e) => e.id !== id));
+  const deleteEmployee = (id) => {
+    const deleted = employees.find((employee) => employee.id === id);
+    const fallback = employees.find((employee) => employee.id !== id)?.name || DEFAULT_EMPLOYEES[0].name;
+    setEmployees((list) => list.filter((e) => e.id !== id));
+    if (deleted) {
+      replaceCustomerField('staff', deleted.name, fallback).catch(console.error);
+      replaceTaskEmployee(deleted.name, fallback).catch(console.error);
+    }
+  };
 
   // ---------- Statuses ----------
   const openAddStatus = () => setStatusModal({ name: '', color: STATUS_COLORS[0], system: false });
   const openEditStatus = (st) => setStatusModal({ ...st });
-  const saveStatus = () => {
+  const replaceCustomerField = async (field, oldName, newName) => {
+    await updateData('customers', (customers) =>
+      Array.isArray(customers)
+        ? customers.map((customer) =>
+            customer[field] === oldName ? { ...customer, [field]: newName } : customer
+          )
+        : customers
+    );
+  };
+  const replaceTaskEmployee = async (oldName, newName) => {
+    await updateData('tasks', (tasks) =>
+      Array.isArray(tasks)
+        ? tasks.map((task) => ({
+            ...task,
+            from: task.from === oldName ? newName : task.from,
+            to: task.to?.split(',').map((name) => name.trim() === oldName ? newName : name.trim()).join(', '),
+          }))
+        : tasks
+    );
+  };
+  const saveStatus = async () => {
     if (!statusModal.name) return;
     if (statusModal.id) {
-      setStatuses((list) => list.map((s) => (s.id === statusModal.id ? statusModal : s)));
+      const previous = statuses.find((status) => status.id === statusModal.id);
+      const nextStatuses = statuses.map((status) => status.id === statusModal.id ? statusModal : status);
+      if (previous && previous.name !== statusModal.name) {
+        await Promise.all([
+          writeData('statuses', nextStatuses),
+          replaceCustomerField('status', previous.name, statusModal.name),
+        ]);
+      } else {
+        await writeData('statuses', nextStatuses);
+      }
     } else {
-      setStatuses((list) => [...list, { ...statusModal, id: Date.now() }]);
+      await writeData('statuses', [...statuses, { ...statusModal, id: Date.now() }]);
     }
     setStatusModal(null);
   };
-  const deleteStatus = (id) => setStatuses((list) => list.filter((s) => s.id !== id));
+  const deleteStatus = (id) => {
+    const deleted = statuses.find((status) => status.id === id);
+    const fallback = statuses.find((status) => status.id !== id)?.name || DEFAULT_STATUSES[0].name;
+    setStatuses((list) => list.filter((s) => s.id !== id));
+    if (deleted) replaceCustomerField('status', deleted.name, fallback).catch(console.error);
+  };
   const moveStatus = (index, dir) => {
     setStatuses((list) => {
       const next = [...list];
@@ -133,16 +181,30 @@ export default function CrmSettings({ onNavigate, onChangePassword, onLogout }) 
   // ---------- Sources ----------
   const openAddSource = () => setSourceModal({ name: '', desc: '' });
   const openEditSource = (src) => setSourceModal({ ...src });
-  const saveSource = () => {
+  const saveSource = async () => {
     if (!sourceModal.name) return;
     if (sourceModal.id) {
-      setSources((list) => list.map((s) => (s.id === sourceModal.id ? sourceModal : s)));
+      const previous = sources.find((source) => source.id === sourceModal.id);
+      const nextSources = sources.map((source) => source.id === sourceModal.id ? sourceModal : source);
+      if (previous && previous.name !== sourceModal.name) {
+        await Promise.all([
+          writeData('sources', nextSources),
+          replaceCustomerField('source', previous.name, sourceModal.name),
+        ]);
+      } else {
+        await writeData('sources', nextSources);
+      }
     } else {
-      setSources((list) => [...list, { ...sourceModal, id: Date.now() }]);
+      await writeData('sources', [...sources, { ...sourceModal, id: Date.now() }]);
     }
     setSourceModal(null);
   };
-  const deleteSource = (id) => setSources((list) => list.filter((s) => s.id !== id));
+  const deleteSource = (id) => {
+    const deleted = sources.find((source) => source.id === id);
+    const fallback = sources.find((source) => source.id !== id)?.name || DEFAULT_SOURCES[0].name;
+    setSources((list) => list.filter((s) => s.id !== id));
+    if (deleted) replaceCustomerField('source', deleted.name, fallback).catch(console.error);
+  };
 
   return (
     <>

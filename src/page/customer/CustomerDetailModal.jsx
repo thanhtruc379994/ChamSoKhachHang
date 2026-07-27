@@ -1,29 +1,14 @@
 import React, { useState } from "react";
 import { X, Phone, Link2, User, Calendar, MapPin, Plus, Pencil, Trash2, PhoneCall, Clock, Bell } from "lucide-react";
+import { getStatusColor } from "../../data/crmOptions";
 import "./CustomerDetailModal.css";
-
-const STATUS_OPTIONS = [
-  "Khách hàng mới",
-  "Đã gửi thông tin",
-  "Đang thuyết phục",
-  "Đã gửi báo giá",
-  "Đã chốt",
-];
-
-const STATUS_CLASS = {
-  "Khách hàng mới": "badge-new",
-  "Đã gửi thông tin": "badge-sent-info",
-  "Đang thuyết phục": "badge-persuading",
-  "Đã gửi báo giá": "badge-quoted",
-  "Đã chốt": "badge-closed",
-};
 
 function fmtMoney(n) {
   if (n === null || n === undefined) return "0";
   return n.toLocaleString("vi-VN");
 }
 
-export default function CustomerDetailModal({ customer, onClose, onStatusChange }) {
+export default function CustomerDetailModal({ customer, statuses, onClose, onStatusChange }) {
   const [showCalls, setShowCalls] = useState(false);
 
   if (!customer) return null;
@@ -35,7 +20,7 @@ export default function CustomerDetailModal({ customer, onClose, onStatusChange 
 
   const revenue = orders.reduce((sum, o) => sum + (o.value || 0), 0);
   const totalCalls = calls.reduce((sum, c) => sum + (c.count || 0), 0);
-  const statusCls = STATUS_CLASS[status] || "";
+  const statusColor = getStatusColor(statuses, status);
   const initial = name.replace(/^(Anh|Chị)\s+/i, "").charAt(0).toUpperCase();
 
   return (
@@ -52,14 +37,14 @@ export default function CustomerDetailModal({ customer, onClose, onStatusChange 
             </div>
           </div>
           <div className="cdm-header-right">
-            <div className={`cdm-status-wrap ${statusCls}`}>
+            <div className="cdm-status-wrap" style={{ backgroundColor: `${statusColor}18`, color: statusColor }}>
               <select
                 className="cdm-status-select"
                 value={status}
                 onChange={(e) => onStatusChange && onStatusChange(id, e.target.value)}
               >
-                {STATUS_OPTIONS.map((opt) => (
-                  <option key={opt} value={opt}>{opt}</option>
+                {statuses.map((option) => (
+                  <option key={option.id} value={option.name}>{option.name}</option>
                 ))}
               </select>
             </div>

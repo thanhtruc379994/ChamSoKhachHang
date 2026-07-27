@@ -128,7 +128,10 @@ export default function CrmHistory({ onNavigate, onChangePassword, onLogout }) {
 
           <div className="crm-history-pagination">
             <button
-              className="crm-page-btn"
+              className="crm-history-page-btn"
+              type="button"
+              aria-label="Trang trước"
+              title="Trang trước"
               disabled={pageSafe === 1}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
             >
@@ -138,7 +141,10 @@ export default function CrmHistory({ onNavigate, onChangePassword, onLogout }) {
               {pageSafe}/{totalPages}
             </span>
             <button
-              className="crm-page-btn"
+              className="crm-history-page-btn"
+              type="button"
+              aria-label="Trang sau"
+              title="Trang sau"
               disabled={pageSafe === totalPages}
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             >

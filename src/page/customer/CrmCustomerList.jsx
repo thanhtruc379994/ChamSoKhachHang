@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   RefreshCw, Plus, Pencil, Wallet, Trash2, PhoneCall, ChevronDown,
   ChevronLeft, ChevronRight, Search, Ban, List
@@ -7,40 +7,8 @@ import CrmHeader from "../../components/header/CrmHeader";
 import CustomerDetailModal from "./CustomerDetailModal";
 import CustomerFormModal from "./CustomerFormModal";
 import { useIndexedDbState } from "../../data/indexedDb";
+import { DEFAULT_EMPLOYEES, DEFAULT_SOURCES, DEFAULT_STATUSES, getStatusColor } from "../../data/crmOptions";
 import "./CrmCustomerList.css";
-
-const STATUS_TABS = [
-  { key: "all", label: "Tất cả", count: 14, icon: List, colorClass: "tab-all" },
-  { key: "new", label: "Khách hàng mới", count: 2, colorClass: "tab-new" },
-  { key: "sent_info", label: "Đã gửi thông tin", count: 4, colorClass: "tab-sent-info" },
-  { key: "persuading", label: "Đang thuyết phục", count: 2, colorClass: "tab-persuading" },
-  { key: "quoted", label: "Đã gửi báo giá", count: 3, colorClass: "tab-quoted" },
-  { key: "closed", label: "Đã chốt", count: 3, colorClass: "tab-closed" },
-  { key: "not_interested", label: "Không quan tâm", count: 0, colorClass: "tab-not-interested" },
-];
-
-const STATUS_OPTIONS = [
-  "Khách hàng mới",
-  "Đã gửi thông tin",
-  "Đang thuyết phục",
-  "Đã gửi báo giá",
-  "Đã chốt",
-  "Không quan tâm",
-];
-
-const TAB_STATUS = {
-  new: "Khách hàng mới", sent_info: "Đã gửi thông tin", persuading: "Đang thuyết phục",
-  quoted: "Đã gửi báo giá", closed: "Đã chốt", not_interested: "Không quan tâm",
-};
-
-const STATUS_CLASS = {
-  "Khách hàng mới": "badge-new",
-  "Đã gửi thông tin": "badge-sent-info",
-  "Đang thuyết phục": "badge-persuading",
-  "Đã gửi báo giá": "badge-quoted",
-  "Đã chốt": "badge-closed",
-  "Không quan tâm": "badge-not-interested",
-};
 
 const CUSTOMERS = [
   { id: 14, date: "14/1/2026", name: "Chị Hoài", call: null, phone: "xxx", source: "Kiot", area: "Đà Lạt", status: "Đang thuyết phục", staff: "Nhân viên 2", note: "chăm nguyên tonie...", revenue: null, revenueBadge: null, lastContact: "---", nextDate: "---", createdDate: "14/1/2026", address: "", orders: [], careHistory: [], calls: [] },
@@ -73,17 +41,17 @@ const CUSTOMERS = [
   { id: 5, date: "9/1/2026", name: "Chị Trang", call: null, phone: "xxx", source: "Facebook", area: "Đà Lạt", status: "Khách hàng mới", staff: "Administrator", note: "BẮP GIÓ LITERAL/BA...", revenue: "---", revenueBadge: null, lastContact: "---", nextDate: "---", createdDate: "9/1/2026", address: "", orders: [], careHistory: [], calls: [] },
 ];
 
-function StatusDropdown({ status, onChange }) {
-  const cls = STATUS_CLASS[status] || "";
+function StatusDropdown({ status, statuses, onChange }) {
+  const color = getStatusColor(statuses, status);
   return (
-    <div className={`crm-status-select-wrap ${cls}`}>
+    <div className="crm-status-select-wrap" style={{ backgroundColor: `${color}18`, color }}>
       <select
         className="crm-status-select"
         value={status}
         onChange={(e) => onChange(e.target.value)}
       >
-        {STATUS_OPTIONS.map((opt) => (
-          <option key={opt} value={opt}>{opt}</option>
+        {statuses.map((option) => (
+          <option key={option.id} value={option.name}>{option.name}</option>
         ))}
       </select>
       <ChevronDown size={13} className="crm-status-select-icon" />
@@ -100,7 +68,10 @@ export default function CrmCustomerList({ onNavigate, onChangePassword, onLogout
   const [activeTab, setActiveTab] = useState("all");
   const [activeNav, setActiveNav] = useState("customers");
   const [search, setSearch] = useState("");
-  const [customers, setCustomers] = useIndexedDbState("customers", CUSTOMERS);
+  const [customers, setCustomers, customersReady] = useIndexedDbState("customers", CUSTOMERS);
+  const [statuses, , statusesReady] = useIndexedDbState("statuses", DEFAULT_STATUSES);
+  const [employees, , employeesReady] = useIndexedDbState("employees", DEFAULT_EMPLOYEES);
+  const [sources, , sourcesReady] = useIndexedDbState("sources", DEFAULT_SOURCES);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [editingCustomer, setEditingCustomer] = useState(undefined);
   const [deleteCustomer, setDeleteCustomer] = useState(null);
@@ -109,12 +80,35 @@ export default function CrmCustomerList({ onNavigate, onChangePassword, onLogout
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
 
+  useEffect(() => {
+    if (!customersReady || !statusesReady || !employeesReady || !sourcesReady) return;
+    const mappings = {
+      status: new Map(DEFAULT_STATUSES.map((item) => [item.name, statuses.find((current) => current.id === item.id)?.name])),
+      staff: new Map(DEFAULT_EMPLOYEES.map((item) => [item.name, employees.find((current) => current.id === item.id)?.name])),
+      source: new Map(DEFAULT_SOURCES.map((item) => [item.name, sources.find((current) => current.id === item.id)?.name])),
+    };
+    setCustomers((list) => {
+      let changed = false;
+      const next = list.map((customer) => {
+        const updates = {};
+        Object.entries(mappings).forEach(([field, mapping]) => {
+          const mappedValue = mapping.get(customer[field]);
+          if (mappedValue && mappedValue !== customer[field]) updates[field] = mappedValue;
+        });
+        if (Object.keys(updates).length === 0) return customer;
+        changed = true;
+        return { ...customer, ...updates };
+      });
+      return changed ? next : list;
+    });
+  }, [customersReady, employees, employeesReady, setCustomers, sources, sourcesReady, statuses, statusesReady]);
+
   const filteredCustomers = useMemo(() => customers.filter((customer) => {
     const keyword = search.trim().toLowerCase();
     const matchesSearch = !keyword || [customer.name, customer.phone, customer.source, customer.area, customer.note]
       .some((value) => String(value || "").toLowerCase().includes(keyword));
     return matchesSearch
-      && (activeTab === "all" || customer.status === TAB_STATUS[activeTab])
+      && (activeTab === "all" || customer.status === activeTab)
       && (staffFilter === "all" || customer.staff === staffFilter)
       && (areaFilter === "all" || customer.area === areaFilter);
   }), [activeTab, areaFilter, customers, search, staffFilter]);
@@ -122,10 +116,15 @@ export default function CrmCustomerList({ onNavigate, onChangePassword, onLogout
   const totalPages = Math.max(1, Math.ceil(filteredCustomers.length / pageSize));
   const safePage = Math.min(page, totalPages);
   const visibleCustomers = filteredCustomers.slice((safePage - 1) * pageSize, safePage * pageSize);
-  const statusTabs = STATUS_TABS.map((tab) => ({
-    ...tab,
-    count: tab.key === "all" ? customers.length : customers.filter((c) => c.status === TAB_STATUS[tab.key]).length,
-  }));
+  const statusTabs = [
+    { key: "all", label: "Tất cả", count: customers.length, icon: List, colorClass: "tab-all" },
+    ...statuses.map((status) => ({
+      key: status.name,
+      label: status.name,
+      color: status.color,
+      count: customers.filter((customer) => customer.status === status.name).length,
+    })),
+  ];
 
   const saveCustomer = (values) => {
     if (values.id) {
@@ -179,12 +178,13 @@ export default function CrmCustomerList({ onNavigate, onChangePassword, onLogout
               const active = activeTab === tab.key;
               const Icon = tab.icon;
               const isFirst = idx === 0;
-              const isLast = idx === STATUS_TABS.length - 1;
+              const isLast = idx === statusTabs.length - 1;
               return (
                 <button
                   key={tab.key}
                   onClick={() => { setActiveTab(tab.key); setPage(1); }}
                   className={`crm-status-tab ${tab.colorClass || ""} ${active ? "active" : ""} ${isFirst ? "first" : ""} ${isLast ? "last" : ""}`}
+                  style={!active && tab.color ? { backgroundColor: `${tab.color}18`, color: tab.color } : undefined}
                 >
                   {Icon && <Icon size={15} className="crm-tab-icon" />}
                   <span>{tab.label}</span>
@@ -196,36 +196,38 @@ export default function CrmCustomerList({ onNavigate, onChangePassword, onLogout
 
           {/* Filter bar */}
           <div className="crm-filter-bar">
-            <button className="crm-filter-btn">
-              <Ban size={14} /> Ẩn cột
-            </button>
-            <div className="crm-search-wrap">
-              <Search size={15} className="crm-search-icon" />
-              <input
-                value={search}
-                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                placeholder="Tìm kiếm từ khoá..."
-                className="crm-search-input"
-              />
-            </div>
-            <select className="crm-filter-select" value={staffFilter} onChange={(e) => { setStaffFilter(e.target.value); setPage(1); }}>
+            <div className="crm-filter-controls">
+              <button className="crm-filter-btn">
+                <Ban size={14} /> Ẩn cột
+              </button>
+              <div className="crm-search-wrap">
+                <Search size={15} className="crm-search-icon" />
+                <input
+                  value={search}
+                  onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                  placeholder="Tìm kiếm từ khoá..."
+                  className="crm-search-input"
+                />
+              </div>
+              <select className="crm-filter-select" value={staffFilter} onChange={(e) => { setStaffFilter(e.target.value); setPage(1); }}>
               <option value="all">Tất cả nhân viên</option>
-              {[...new Set(customers.map((c) => c.staff))].map(x => <option key={x}>{x}</option>)}
-            </select>
-            <select className="crm-filter-select" value={areaFilter} onChange={(e) => { setAreaFilter(e.target.value); setPage(1); }}>
-              <option value="all">Tất cả khu vực</option>
-              {[...new Set(customers.map((c) => c.area))].map(x => <option key={x}>{x}</option>)}
-            </select>
-            <button className="crm-refresh-btn" title="Đặt lại bộ lọc" onClick={() => { setSearch(""); setStaffFilter("all"); setAreaFilter("all"); setActiveTab("all"); setPage(1); }}>
-              <RefreshCw size={15} />
-            </button>
-            <div className="crm-care-wrap">
-              <label className="crm-checkbox-label">
-                <input type="checkbox" />
-                Cần chăm
-              </label>
-              <input defaultValue={2} className="crm-days-input" />
-              <span className="crm-days-text">ngày tới</span>
+              {employees.map(employee => <option key={employee.id} value={employee.name}>{employee.name}</option>)}
+              </select>
+              <select className="crm-filter-select" value={areaFilter} onChange={(e) => { setAreaFilter(e.target.value); setPage(1); }}>
+                <option value="all">Tất cả khu vực</option>
+                {[...new Set(customers.map((c) => c.area))].map(x => <option key={x}>{x}</option>)}
+              </select>
+              <button className="crm-refresh-btn" title="Đặt lại bộ lọc" onClick={() => { setSearch(""); setStaffFilter("all"); setAreaFilter("all"); setActiveTab("all"); setPage(1); }}>
+                <RefreshCw size={15} />
+              </button>
+              <div className="crm-care-wrap">
+                <label className="crm-checkbox-label">
+                  <input type="checkbox" />
+                  Cần chăm
+                </label>
+                <input defaultValue={2} className="crm-days-input" />
+                <span className="crm-days-text">ngày tới</span>
+              </div>
             </div>
             <button className="crm-add-btn" onClick={() => setEditingCustomer(null)}>
               <Plus size={15} /> Thêm
@@ -269,7 +271,7 @@ export default function CrmCustomerList({ onNavigate, onChangePassword, onLogout
                     <td className="crm-cell-muted">{c.phone}</td>
                     <td className="crm-cell-text">{c.source}</td>
                     <td className="crm-cell-nowrap crm-cell-text">{c.area}</td>
-                    <td><StatusDropdown status={c.status} onChange={(val) => handleStatusChange(c.id, val)} /></td>
+                    <td><StatusDropdown status={c.status} statuses={statuses} onChange={(val) => handleStatusChange(c.id, val)} /></td>
                     <td className="crm-cell-nowrap crm-cell-text">{c.staff}</td>
                     <td className="crm-cell-nowrap crm-cell-truncate crm-cell-muted">{c.note}</td>
                     <td className="crm-cell-nowrap">
@@ -318,12 +320,13 @@ export default function CrmCustomerList({ onNavigate, onChangePassword, onLogout
       {selectedCustomer !== null && (
         <CustomerDetailModal
           customer={customers.find((c) => c.id === selectedCustomer)}
+          statuses={statuses}
           onClose={() => setSelectedCustomer(null)}
           onStatusChange={handleStatusChange}
         />
       )}
       {editingCustomer !== undefined && (
-        <CustomerFormModal customer={editingCustomer} onClose={() => setEditingCustomer(undefined)} onSave={saveCustomer} />
+        <CustomerFormModal customer={editingCustomer} statuses={statuses} employees={employees} sources={sources} onClose={() => setEditingCustomer(undefined)} onSave={saveCustomer} />
       )}
       {deleteCustomer && (
         <div className="crm-dialog-overlay" onMouseDown={() => setDeleteCustomer(null)}>

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import CrmHeader from '../../components/header/CrmHeader';
 import { useIndexedDbState } from '../../data/indexedDb';
+import { DEFAULT_EMPLOYEES } from '../../data/crmOptions';
 import './CrmTasks.css';
 
 const PAGE_SIZE = 16;
@@ -76,6 +77,7 @@ const emptyTask = { due: '', priority: 'normal', content: '', from: 'Administrat
 
 export default function CrmTasks({ onNavigate, onChangePassword, onLogout }) {
   const [tasks, setTasks] = useIndexedDbState('tasks', initialTasks);
+  const [employees] = useIndexedDbState('employees', DEFAULT_EMPLOYEES);
   const [tab, setTab] = useState('todo'); // 'todo' | 'done'
   const [dueFilter, setDueFilter] = useState('');
   const [search, setSearch] = useState('');
@@ -349,18 +351,24 @@ export default function CrmTasks({ onNavigate, onChangePassword, onLogout }) {
                 <label>Người nhận</label>
                 <input
                   type="text"
+                  list="crm-task-employees"
                   placeholder="Nhân viên 1, Nhân viên 2..."
                   value={taskModal.to}
                   onChange={(e) => setTaskModal({ ...taskModal, to: e.target.value })}
                 />
+                <datalist id="crm-task-employees">
+                  <option value="Tất cả" />
+                  {employees.map(employee => <option key={employee.id} value={employee.name} />)}
+                </datalist>
               </div>
               <div className="crm-form-group">
                 <label>Người gửi</label>
-                <input
-                  type="text"
+                <select
                   value={taskModal.from}
                   onChange={(e) => setTaskModal({ ...taskModal, from: e.target.value })}
-                />
+                >
+                  {employees.map(employee => <option key={employee.id} value={employee.name}>{employee.name}</option>)}
+                </select>
               </div>
             </div>
 
