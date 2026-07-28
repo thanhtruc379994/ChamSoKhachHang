@@ -10,7 +10,7 @@ import { useIndexedDbState } from "../../data/indexedDb";
 import { DEFAULT_EMPLOYEES, DEFAULT_SOURCES, DEFAULT_STATUSES, getStatusColor } from "../../data/crmOptions";
 import "./CrmCustomerList.css";
 
-const CUSTOMERS = [
+export const CUSTOMERS = [
   { id: 14, date: "14/1/2026", name: "Chị Hoài", call: null, phone: "xxx", source: "Kiot", area: "Đà Lạt", status: "Đang thuyết phục", staff: "Nhân viên 2", note: "chăm nguyên tonie...", revenue: null, revenueBadge: null, lastContact: "---", nextDate: "---", createdDate: "14/1/2026", address: "", orders: [], careHistory: [], calls: [] },
   { id: 13, date: "13/1/2026", name: "Anh Hoàng", call: null, badge: 1, phone: "xxx", source: "Kiot", area: "Đà Lạt", status: "Đã gửi báo giá", staff: "Nhân viên 2", note: "chăm nguyên tonie...", revenue: null, revenueBadge: null, lastContact: "9/1/2026", nextDate: "12/1/...", createdDate: "13/1/2026", address: "", orders: [], careHistory: [], calls: [] },
   { id: 12, date: "12/1/2026", name: "Anh Mạnh", call: null, badge: 2, phone: "xxx", source: "Kiot", area: "Đà Lạt", status: "Đang thuyết phục", staff: "Nhân viên 1", note: "chăm nguyên tonie...", revenue: null, revenueBadge: null, lastContact: "---", nextDate: "---", createdDate: "12/1/2026", address: "", orders: [], careHistory: [], calls: [] },
@@ -323,6 +323,9 @@ export default function CrmCustomerList({ onNavigate, onChangePassword, onLogout
           statuses={statuses}
           onClose={() => setSelectedCustomer(null)}
           onStatusChange={handleStatusChange}
+          onUpdateCustomer={(updated) => {
+            setCustomers((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
+          }}
         />
       )}
       {editingCustomer !== undefined && (

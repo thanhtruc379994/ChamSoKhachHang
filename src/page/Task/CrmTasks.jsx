@@ -264,13 +264,13 @@ export default function CrmTasks({ onNavigate, onChangePassword, onLogout }) {
       {confirmDoneId && (
         <div className="crm-modal-overlay" onClick={() => setConfirmDoneId(null)}>
           <div className="crm-confirm-modal" onClick={(e) => e.stopPropagation()}>
-            <h3 className="crm-confirm-title">
-              <span className="crm-confirm-icon">
-                <IconHelp />
-              </span>
-              Xác nhận
-            </h3>
-            <p className="crm-confirm-text">Bạn có chắc chắn muốn đánh dấu công việc này là "Đã xong"?</p>
+            <div className="crm-confirm-icon-wrap info">
+              <IconHelp />
+            </div>
+            <h3 className="crm-confirm-title">Xác nhận</h3>
+            <p className="crm-confirm-text">
+              Bạn có chắc chắn muốn đánh dấu công việc này là <strong>"Đã xong"</strong>?
+            </p>
             <div className="crm-confirm-actions">
               <button className="crm-btn-cancel" onClick={() => setConfirmDoneId(null)}>
                 Hủy
@@ -287,18 +287,18 @@ export default function CrmTasks({ onNavigate, onChangePassword, onLogout }) {
       {deleteId && (
         <div className="crm-modal-overlay" onClick={() => setDeleteId(null)}>
           <div className="crm-confirm-modal" onClick={(e) => e.stopPropagation()}>
-            <h3 className="crm-confirm-title">
-              <span className="crm-confirm-icon">
-                <IconHelp />
-              </span>
-              Xác nhận
-            </h3>
-            <p className="crm-confirm-text">Bạn có chắc chắn muốn xóa công việc này?</p>
+            <div className="crm-confirm-icon-wrap danger">
+              <IconTrash />
+            </div>
+            <h3 className="crm-confirm-title">Xác nhận xóa</h3>
+            <p className="crm-confirm-text">
+              Bạn có chắc chắn muốn xóa công việc này?
+            </p>
             <div className="crm-confirm-actions">
               <button className="crm-btn-cancel" onClick={() => setDeleteId(null)}>
                 Hủy
               </button>
-              <button className="crm-btn-confirm" onClick={deleteTask}>
+              <button className="crm-btn-confirm danger" onClick={deleteTask}>
                 OK
               </button>
             </div>

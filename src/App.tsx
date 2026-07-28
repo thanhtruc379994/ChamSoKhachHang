@@ -29,7 +29,10 @@ function App() {
 
     const pageProps = {
         onNavigate: handleNavigate,
-        onChangePassword: () => { setMessage(''); setPasswordModal(true) },
+        onChangePassword: () => {
+            setMessage('');
+            setPasswordModal(true)
+        },
         onLogout: () => setLogoutModal(true),
     }
 
@@ -89,19 +92,34 @@ function App() {
             )}
             {passwordModal && <div className="crm-auth-overlay" onMouseDown={() => setPasswordModal(false)}>
                 <form className="crm-auth-dialog" onSubmit={changePassword} onMouseDown={(e) => e.stopPropagation()}>
-                    <div className="crm-auth-title"><span><KeyRound size={19}/> Đổi mật khẩu</span><button type="button" onClick={() => setPasswordModal(false)}><X size={18}/></button></div>
+                    <div className="crm-auth-title"><span><KeyRound size={19}/> Đổi mật khẩu</span>
+                        <button type="button" onClick={() => setPasswordModal(false)}><X size={18}/></button>
+                    </div>
                     <label>Mật khẩu hiện tại<input name="current" type="password" autoFocus required/></label>
                     <label>Mật khẩu mới<input name="next" type="password" required/></label>
                     <label>Nhập lại mật khẩu mới<input name="confirm" type="password" required/></label>
-                    {message && <div className={message.includes('thành công') ? 'crm-auth-success' : 'crm-auth-error'}>{message}</div>}
-                    <div className="crm-auth-actions"><button type="button" onClick={() => setPasswordModal(false)}>Hủy</button><button className="primary">Cập nhật</button></div>
+                    {message && <div
+                        className={message.includes('thành công') ? 'crm-auth-success' : 'crm-auth-error'}>{message}</div>}
+                    <div className="crm-auth-actions">
+                        <button type="button" onClick={() => setPasswordModal(false)}>Hủy</button>
+                        <button className="primary">Cập nhật</button>
+                    </div>
                 </form>
             </div>}
             {logoutModal && <div className="crm-auth-overlay" onMouseDown={() => setLogoutModal(false)}>
                 <div className="crm-logout-dialog" onMouseDown={(e) => e.stopPropagation()}>
-                    <div className="crm-logout-icon"><LogIn size={22}/></div><h3>Đăng xuất?</h3>
+                    <div className="crm-logout-icon"><LogIn size={22}/></div>
+                    <h3>Đăng xuất?</h3>
                     <p>Bạn có chắc muốn đăng xuất khỏi hệ thống?</p>
-                    <div className="crm-auth-actions"><button onClick={() => setLogoutModal(false)}>Ở lại</button><button className="danger" onClick={() => { sessionStorage.setItem('cskh-session','logged-out'); setLogoutModal(false); setLoggedIn(false) }}>Đăng xuất</button></div>
+                    <div className="crm-auth-actions">
+                        <button onClick={() => setLogoutModal(false)}>Ở lại</button>
+                        <button className="danger" onClick={() => {
+                            sessionStorage.setItem('cskh-session', 'logged-out');
+                            setLogoutModal(false);
+                            setLoggedIn(false)
+                        }}>Đăng xuất
+                        </button>
+                    </div>
                 </div>
             </div>}
         </div>
