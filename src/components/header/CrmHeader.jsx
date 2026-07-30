@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  Users, BarChart2, Settings, Bell, History, KeyRound, LogOut,
+  Users, BarChart2, Settings, Bell, History, KeyRound, LogOut, Sparkles,
 } from "lucide-react";
 import "./CrmHeader.css";
 
@@ -33,41 +33,47 @@ export default function CrmHeader({
   onLogout,
 }) {
   return (
-    <div className="crm-header">
-      <div className="crm-header-top">
-        <div className="crm-header-user-box">
-          <span className="crm-header-username">{userName}</span>
-          <button className="crm-header-btn change-pass" onClick={onChangePassword}>
-            <KeyRound size={13} /> Đổi mật khẩu
-          </button>
-          <button className="crm-header-btn logout" onClick={onLogout}>
-            <LogOut size={13} /> Đăng xuất
-          </button>
-        </div>
+    <aside className="crm-header">
+      <div className="crm-header-brand">
+        <span className="crm-header-brand-mark"><Sparkles size={20} /></span>
+        <span><b>Chăm sóc KH</b><small>Customer workspace</small></span>
+      </div>
+
+      <div className="crm-header-context">
+        <span>KHÔNG GIAN LÀM VIỆC</span>
         <h1 className="crm-header-title">{title}</h1>
       </div>
 
-      <div className="crm-header-nav-wrap">
-        <div className="crm-header-nav">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const active = activeNav === item.key;
-            return (
-              <button
-                key={item.key}
-                onClick={() => onNavChange && onNavChange(item.key)}
-                className={`crm-header-nav-item ${active ? "active" : ""}`}
-              >
-                <Icon size={16} />
-                {item.label}
-                {item.badge ? (
-                  <span className="crm-header-nav-badge">{item.badge}</span>
-                ) : null}
-              </button>
-            );
-          })}
+      <nav className="crm-header-nav" aria-label="Điều hướng chính">
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const active = activeNav === item.key;
+          return (
+            <button
+              key={item.key}
+              onClick={() => onNavChange && onNavChange(item.key)}
+              className={`crm-header-nav-item ${active ? "active" : ""}`}
+            >
+              <span className="crm-nav-icon"><Icon size={18} /></span>
+              <span>{item.label}</span>
+              {item.badge ? <span className="crm-header-nav-badge">{item.badge}</span> : null}
+            </button>
+          );
+        })}
+      </nav>
+
+      <div className="crm-header-user-box">
+        <span className="crm-header-avatar">{userName.slice(0, 1).toUpperCase()}</span>
+        <span className="crm-header-username"><b>{userName}</b><small>Quản trị hệ thống</small></span>
+        <div className="crm-header-user-actions">
+          <button className="crm-header-btn change-pass" onClick={onChangePassword} title="Đổi mật khẩu">
+            <KeyRound size={16} />
+          </button>
+          <button className="crm-header-btn logout" onClick={onLogout} title="Đăng xuất">
+            <LogOut size={16} />
+          </button>
         </div>
       </div>
-    </div>
+    </aside>
   );
 }

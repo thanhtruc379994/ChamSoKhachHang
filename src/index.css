@@ -1,113 +1,122 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --ink:#1A1E26;
+  --ink-soft:#303845;
+  --ink-deep:#10131A;
+  --gold:#D3AD5F;
+  --gold-light:#E9C97C;
+  --gold-deep:#AD8337;
+  --gold-soft:#F8F0E2;
+  --gold-hover:#E2BF75;
+  --paper:#FAF9F6;
+  --surface:#FFFFFF;
+  --line:#E7E0D4;
+  --field-line:#D8D1C5;
+  --surface-hover:#FCF8EF;
+  --muted:#5B6470;
+  --success:#247A57;
+  --warning:#B7791F;
+  --error:#C0392B;
+  --coral:#D3AD5F;
+  --coral-dark:#AD8337;
+  --lime:#E9C97C;
+  --sea:#247A57;
+  font-family:"Aptos","Segoe UI",Arial,sans-serif;
+  color:#273531;
+  background:var(--paper);
+  font-synthesis:none;
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+}
+* { box-sizing:border-box; }
+html,body,#root { margin:0; width:100%; min-height:100%; }
+body { min-width:320px; background:var(--paper); }
+button,input,select,textarea { font:inherit; }
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible { outline:3px solid rgba(211,173,95,.3); outline-offset:2px; }
+h1,h2,h3 { color:var(--ink); }
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+/* Main application frame */
+.crm,.crm-reports { min-height:100vh !important; padding-left:248px !important; background:var(--paper) !important; }
+.crm-container,.reports-page,.crm-history-page,.crm-tasks-page,.crm-settings-page { padding:28px 30px !important; }
+.crm-history-page,.crm-tasks-page,.crm-settings-page { margin-left:248px; min-height:100vh; background:var(--paper); }
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+/* Shared surfaces */
+.crm-card,.crm-history-toolbar,.crm-history-table-wrap,.crm-tasks-toolbar,.crm-tasks-table-wrap,
+.crm-settings-card,.report-summary article,.report-chart-card {
+  background:var(--surface) !important; border:1px solid var(--line) !important;
+  border-radius:14px 14px 5px 14px !important; box-shadow:0 10px 30px rgba(23,33,31,.045) !important;
+}
+.crm-card { padding:18px !important; }
+.crm-settings-card { border-top:4px solid var(--coral) !important; }
+.report-summary article { border:1px solid var(--line) !important; }
+.report-summary article > svg {
+  color:var(--gold, #AD8337) !important;
+  background:#F8F0E2 !important;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+/* Controls */
+input,select,textarea,.crm-filter-btn,.crm-page-btn {
+  border-color:var(--field-line) !important; background:var(--surface) !important; color:var(--ink-soft) !important;
+  border-radius:9px 9px 3px 9px !important;
+}
+input:focus,select:focus,textarea:focus { border-color:var(--coral) !important; box-shadow:0 0 0 3px rgba(211,173,95,.15) !important; }
+.crm-add-btn,.crm-add-task-btn,.crm-btn-save,.crm-refresh-btn,.crm-btn-confirm,.crm-dialog-actions .save {
+  background:var(--coral) !important; color:var(--ink) !important; border-radius:9px 9px 3px 9px !important;
+  font-weight:750 !important; box-shadow:none !important;
+}
+.crm-auth-actions .primary,.crm-login-card > button {
+  background:var(--coral) !important; color:var(--ink-deep) !important;
+}
+.crm-auth-title span svg,.crm-dialog-header > div > svg { color:var(--coral-dark) !important; }
+.crm-btn-cancel { background:var(--ink-soft) !important; }
+.crm-add-btn:hover,.crm-add-task-btn:hover,.crm-btn-save:hover,.crm-refresh-btn:hover,.crm-btn-confirm:hover { background:var(--coral-dark) !important; color:#fff !important; }
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
+/* Tabs become an editorial segmented rail */
+.crm-status-tabs { justify-content:flex-start !important; gap:7px; padding-bottom:8px !important; }
+.crm-status-tab { clip-path:none !important; margin:0 !important; padding:0 14px !important; border-radius:10px 10px 3px 10px !important; border:1px solid var(--line) !important; background:#ede8dc !important; color:var(--ink-soft) !important; }
+.crm-status-tab.active,.crm-tasks-tab.active { background:var(--ink) !important; color:#fff !important; border-color:var(--ink) !important; }
+.crm-status-tab.active .crm-tab-count { color:var(--ink) !important; }
+.crm-tasks-tab { border-radius:10px 10px 3px 10px !important; }
 
-#root {
-  width: 100%;
-  max-width: 100%;
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+/* Data tables */
+.crm-table-wrap,.crm-history-table-wrap,.crm-tasks-table-wrap { border-radius:12px 12px 4px 12px !important; border-color:var(--line) !important; }
+.crm-table th,.crm-history-table th,.crm-tasks-table th {
+  background:#ece7dc !important; color:#54615d !important; text-transform:uppercase;
+  letter-spacing:.07em; font-size:10px !important; border-color:var(--line) !important;
 }
+.crm-table td,.crm-history-table td,.crm-tasks-table td { border-color:#ebe6dc !important; }
+.crm-table tbody tr:nth-child(even),.crm-history-table tbody tr:nth-child(even),.crm-tasks-table tbody tr:nth-child(even) { background:rgba(245,239,227,.48); }
+.crm-table tbody tr:hover,.crm-history-table tbody tr:hover,.crm-tasks-table tbody tr:hover { background:#FCF8EF !important; }
+.crm-name-link { color:var(--gold-deep, #AD8337) !important; font-weight:700 !important; }
+.crm-action-btn,.crm-icon-btn { border-radius:8px 8px 3px 8px !important; }
+.crm-action-btn.edit { background:#F8F0E2 !important; color:var(--coral-dark) !important; }
+.crm-action-btn.money { background:#e9f3ee !important; color:var(--sea) !important; }
 
-body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  min-height: 100vh;
-}
+/* Reports */
+.report-chart-card { min-height:320px !important; }
+.report-chart-card h3 svg,.crm-settings-card-title svg { color:var(--coral) !important; }
+.report-pie { filter:saturate(.72); }
+.report-ranking b { background:var(--ink) !important; }
+.report-ranking strong { background:var(--sea) !important; }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
+/* Dialogs */
+.crm-modal-overlay,.crm-dialog-overlay,.crm-auth-overlay { background:rgba(16,19,26,.7) !important; backdrop-filter:blur(5px) !important; }
+.crm-modal,.crm-task-modal,.crm-confirm-modal,.crm-customer-form,.crm-confirm-dialog,.crm-auth-dialog,.crm-logout-dialog {
+  background:var(--surface) !important; border:1px solid var(--line); border-radius:18px 18px 6px 18px !important;
+  box-shadow:0 30px 80px rgba(12,20,18,.3) !important;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
+/* Login — entirely separate branded composition */
+.crm-login-page { background:var(--ink) !important; position:relative; overflow:hidden; }
+.crm-login-page::before { content:""; position:absolute; width:520px; height:520px; border:100px solid rgba(216,228,109,.13); border-radius:50%; left:-170px; bottom:-230px; }
+.crm-login-page::after { content:"MẠCH NỐI"; position:absolute; right:-15px; top:8%; color:rgba(255,255,255,.035); font-size:clamp(70px,13vw,190px); font-weight:900; letter-spacing:-.07em; pointer-events:none; }
+.crm-login-card { position:relative; z-index:1; background:var(--paper) !important; border-radius:24px 24px 7px 24px !important; border:1px solid rgba(255,255,255,.14); box-shadow:0 35px 90px rgba(0,0,0,.38) !important; }
+.crm-login-logo { background:var(--coral) !important; color:var(--ink) !important; border-radius:14px 14px 4px 14px !important; }
+.crm-login-card > button { background:var(--coral) !important; color:var(--ink) !important; border-radius:10px 10px 3px 10px !important; }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+@media (max-width:760px) {
+  body { padding-bottom:70px; }
+  .crm,.crm-reports { padding-left:0 !important; }
+  .crm-history-page,.crm-tasks-page,.crm-settings-page { margin-left:0; }
+  .crm-container,.reports-page,.crm-history-page,.crm-tasks-page,.crm-settings-page { padding:16px !important; }
+  .crm-history-toolbar,.crm-tasks-toolbar { flex-wrap:wrap !important; }
 }
