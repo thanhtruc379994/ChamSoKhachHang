@@ -102,6 +102,65 @@
     overflow: hidden;
 }
 
+.report-interactive-tile {
+    position: relative;
+    cursor: pointer;
+    transform: translateY(0) scale(1);
+    transition: transform .24s cubic-bezier(.2,.8,.2,1),
+                box-shadow .24s ease,
+                border-color .24s ease,
+                background-color .24s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.report-interactive-tile:hover {
+    transform: translateY(-4px);
+    border-color: #D3AD5F !important;
+    box-shadow: 0 16px 34px rgba(23, 33, 31, .11) !important;
+}
+
+.report-interactive-tile:focus-visible {
+    outline: 3px solid rgba(211, 173, 95, .3);
+    outline-offset: 3px;
+}
+
+.report-interactive-tile.is-pressed {
+    animation: reportTilePress .48s cubic-bezier(.2,.85,.25,1);
+}
+
+.report-interactive-tile::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at center, rgba(211,173,95,.2), transparent 65%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.report-interactive-tile.is-pressed::after {
+    animation: reportTileGlow .48s ease-out;
+}
+
+@keyframes reportTilePress {
+    0% { transform: translateY(-2px) scale(1); }
+    38% { transform: translateY(1px) scale(.975); }
+    72% { transform: translateY(-5px) scale(1.012); }
+    100% { transform: translateY(-4px) scale(1); }
+}
+
+@keyframes reportTileGlow {
+    0% { opacity: 0; transform: scale(.94); }
+    38% { opacity: 1; }
+    100% { opacity: 0; transform: scale(1.03); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .report-interactive-tile { transition: border-color .15s ease; }
+    .report-interactive-tile.is-pressed,
+    .report-interactive-tile.is-pressed::after { animation-duration: .01ms; }
+}
+
 .report-chart-card h3 {
     margin: 0 0 20px;
     display: flex;

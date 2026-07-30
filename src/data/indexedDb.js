@@ -1,9 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
+import { DEFAULT_EMPLOYEES, DEFAULT_SOURCES, DEFAULT_STATUSES } from './crmOptions';
 
 const DB_NAME = 'cskh-crm';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 const STORE_NAME = 'app-data';
 const subscribers = new Map();
+const DEFAULT_RECORDS = {
+  statuses: DEFAULT_STATUSES,
+  employees: DEFAULT_EMPLOYEES,
+  sources: DEFAULT_SOURCES,
+};
 
 function notifySubscribers(key, value, source) {
   subscribers.get(key)?.forEach((listener) => listener(value, source));
@@ -29,8 +35,26 @@ function openDatabase() {
               name: 'Kiot',
               desc: 'Khách hàng tại cửa hàng',
             }], 'sources');
-          }
-        };
+        }
+      };
+      // v3: repair partial installations and add the current option defaults
+      // without overwriting user edits already stored in IndexedDB.
+      if (event.oldVersion < 3) {
+        const store = request.transaction.objectStore(STORE_NAME);
+        Object.entries(DEFAULT_RECORDS).forEach(([key, defaults]) => {
+          const readRequest = store.get(key);
+          readRequest.onsuccess = () => {
+            const saved = readRequest.result;
+            if (!Array.isArray(saved)) {
+              store.put(defaults, key);
+              return;
+            }
+            const knownIds = new Set(saved.map((item) => item?.id));
+            const missing = defaults.filter((item) => !knownIds.has(item.id));
+            if (missing.length) store.put([...saved, ...missing], key);
+          };
+        });
+      }
       }
     };
 
@@ -47,6 +71,10 @@ export async function readData(key) {
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
     transaction.oncomplete = () => db.close();
+    transaction.onerror = () => {
+      db.close();
+      reject(transaction.error);
+    };
   });
 }
 
@@ -60,7 +88,10 @@ export async function writeData(key, value, source) {
       notifySubscribers(key, value, source);
       resolve();
     };
-    transaction.onerror = () => reject(transaction.error);
+    transaction.onerror = () => {
+      db.close();
+      reject(transaction.error);
+    };
   });
 }
 
@@ -82,7 +113,10 @@ export async function updateData(key, updater, source) {
       notifySubscribers(key, nextValue, source);
       resolve(nextValue);
     };
-    transaction.onerror = () => reject(transaction.error);
+    transaction.onerror = () => {
+      db.close();
+      reject(transaction.error);
+    };
   });
 }
 

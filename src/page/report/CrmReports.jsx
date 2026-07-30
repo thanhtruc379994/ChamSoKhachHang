@@ -58,9 +58,22 @@ function Legend({ items = [] }) {
   );
 }
 
-function Card({ title, icon: Icon = BarChart3, children }) {
+function Card({ title, icon: Icon = BarChart3, children, tileId, activeTile, onActivate }) {
+  const activateFromKeyboard = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onActivate(tileId);
+    }
+  };
   return (
-    <section className="report-chart-card">
+    <section
+      className={`report-chart-card report-interactive-tile ${activeTile === tileId ? 'is-pressed' : ''}`}
+      role="button"
+      tabIndex={0}
+      onClick={() => onActivate(tileId)}
+      onKeyDown={activateFromKeyboard}
+      onAnimationEnd={() => activeTile === tileId && onActivate(null)}
+    >
       <h3><Icon size={17} />{title}</h3>
       {children}
     </section>
@@ -229,6 +242,7 @@ function Ranking({ rows = [] }) {
 }
 
 export default function CrmReports({ onNavigate, onChangePassword, onLogout }) {
+  const [activeTile, setActiveTile] = useState(null);
   const [customers] = useIndexedDbState('customers', CUSTOMERS);
   const [statuses] = useIndexedDbState('statuses', DEFAULT_STATUSES);
   const [employees] = useIndexedDbState('employees', DEFAULT_EMPLOYEES);
@@ -442,28 +456,28 @@ export default function CrmReports({ onNavigate, onChangePassword, onLogout }) {
         </div>
 
         <div className="report-summary">
-          <article>
+          <article className={`report-interactive-tile ${activeTile === 'summary-customers' ? 'is-pressed' : ''}`} tabIndex={0} role="button" onClick={() => setActiveTile('summary-customers')} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setActiveTile('summary-customers')} onAnimationEnd={() => setActiveTile(null)}>
             <Users />
             <div>
               <b>{totalCustomers}</b>
               <span>Tổng khách hàng</span>
             </div>
           </article>
-          <article>
+          <article className={`report-interactive-tile ${activeTile === 'summary-revenue' ? 'is-pressed' : ''}`} tabIndex={0} role="button" onClick={() => setActiveTile('summary-revenue')} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setActiveTile('summary-revenue')} onAnimationEnd={() => setActiveTile(null)}>
             <BarChart3 />
             <div>
               <b>{fmtMoney(totalRevenue)} ({totalOrders} đơn)</b>
               <span>Tổng doanh thu</span>
             </div>
           </article>
-          <article>
+          <article className={`report-interactive-tile ${activeTile === 'summary-today' ? 'is-pressed' : ''}`} tabIndex={0} role="button" onClick={() => setActiveTile('summary-today')} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setActiveTile('summary-today')} onAnimationEnd={() => setActiveTile(null)}>
             <CalendarDays />
             <div>
               <b>{todayCount}</b>
               <span>Khách hàng hôm nay</span>
             </div>
           </article>
-          <article>
+          <article className={`report-interactive-tile ${activeTile === 'summary-staff' ? 'is-pressed' : ''}`} tabIndex={0} role="button" onClick={() => setActiveTile('summary-staff')} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setActiveTile('summary-staff')} onAnimationEnd={() => setActiveTile(null)}>
             <Star />
             <div>
               <b>{mostActiveStaff}</b>
@@ -473,46 +487,46 @@ export default function CrmReports({ onNavigate, onChangePassword, onLogout }) {
         </div>
 
         <div className="report-dashboard">
-          <Card title="Phân bố theo trạng thái">
+          <Card title="Phân bố theo trạng thái" tileId="status" activeTile={activeTile} onActivate={setActiveTile}>
             <Legend items={statusLegend} />
             <PieChart items={statusPieData} />
           </Card>
-          <Card title="Khách hàng theo nhân viên">
+          <Card title="Khách hàng theo nhân viên" tileId="employee" activeTile={activeTile} onActivate={setActiveTile}>
             <Legend items={statusLegend} />
             <ReportsBars items={employeeBarItems} legend={statusLegend} />
           </Card>
-          <Card title="Xu hướng theo ngày">
+          <Card title="Xu hướng theo ngày" tileId="trend" activeTile={activeTile} onActivate={setActiveTile}>
             <Legend items={[['#4f67ad', 'Khách hàng mới'], ['#43b58a', 'Đơn hàng đã chốt']]} />
             <LineChart dates={dailyTrendData.dates} series={dailyTrendData.series} />
           </Card>
-          <Card title="Khách hàng theo nguồn" icon={Share2}>
+          <Card title="Khách hàng theo nguồn" icon={Share2} tileId="source" activeTile={activeTile} onActivate={setActiveTile}>
             <Legend items={[['#43b58a', 'Đã chốt'], ['#4f67ad', 'Chưa chốt']]} />
             <HorizontalBars rows={sourceRows} />
           </Card>
 
-          <Card title="Top sale chốt" icon={Trophy}>
+          <Card title="Top sale chốt" icon={Trophy} tileId="top-sale" activeTile={activeTile} onActivate={setActiveTile}>
             <Legend items={[['#43b58a', 'Tỷ lệ chốt (%)'], ['#4f67ad', 'Số khách hàng đã chốt']]} />
             <ReportsBars items={topSaleBarItems} legend={[['#43b58a', 'Tỷ lệ chốt (%)'], ['#4f67ad', 'Số khách hàng đã chốt']]} />
           </Card>
-          <Card title="Top doanh thu theo khách hàng" icon={Trophy}>
+          <Card title="Top doanh thu theo khách hàng" icon={Trophy} tileId="top-revenue" activeTile={activeTile} onActivate={setActiveTile}>
             <Ranking rows={topCustomerRanking} />
           </Card>
-          <Card title="Doanh thu theo nguồn khách">
+          <Card title="Doanh thu theo nguồn khách" tileId="source-revenue" activeTile={activeTile} onActivate={setActiveTile}>
             <Legend items={sourceLegend} />
             <PieChart donut items={revenueBySourceItems} />
           </Card>
-          <Card title="Doanh thu theo nhân viên" icon={Users}>
+          <Card title="Doanh thu theo nhân viên" icon={Users} tileId="staff-revenue" activeTile={activeTile} onActivate={setActiveTile}>
             <Ranking rows={revenueByStaffRanking} />
           </Card>
 
-          <Card title="Số cuộc gọi theo nhân viên" icon={Phone}>
+          <Card title="Số cuộc gọi theo nhân viên" icon={Phone} tileId="staff-calls" activeTile={activeTile} onActivate={setActiveTile}>
             <Ranking rows={callsByStaffRanking} />
           </Card>
-          <Card title="Khách hàng theo Khu vực" icon={MapPin}>
+          <Card title="Khách hàng theo Khu vực" icon={MapPin} tileId="area-customers" activeTile={activeTile} onActivate={setActiveTile}>
             <Legend items={[['#43b58a', 'Đã chốt'], ['#4f67ad', 'Chưa chốt']]} />
             <HorizontalBars rows={areaRows} />
           </Card>
-          <Card title="Doanh thu theo Khu vực" icon={MapPin}>
+          <Card title="Doanh thu theo Khu vực" icon={MapPin} tileId="area-revenue" activeTile={activeTile} onActivate={setActiveTile}>
             <Legend items={areaLegend} />
             <PieChart donut items={revenueByAreaItems} />
           </Card>
