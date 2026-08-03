@@ -1,0 +1,67 @@
+/* Material bridge for the legacy business views. New shared UI uses MUI directly. */
+:root {
+  font-family: Roboto, "Segoe UI", Arial, sans-serif;
+  color: #1d1b20;
+  background: #fffbfe;
+  --ink: #1d1b20;
+  --ink-soft: #49454f;
+  --paper: #fffbfe;
+  --surface: #fff;
+  --line: #e7e0ec;
+  --field-line: #79747e;
+  --coral: #6750a4;
+  --coral-dark: #4f378b;
+  --gold: #6750a4;
+  --gold-deep: #4f378b;
+  --sea: #2e7d32;
+}
+
+body { min-width: 320px; margin: 0; background: var(--paper); }
+button, input, select, textarea { font: inherit; }
+.crm, .crm-reports { min-height: 100vh !important; padding-left: 248px !important; background: var(--paper) !important; }
+.crm-container, .reports-page, .crm-history-page, .crm-tasks-page, .crm-settings-page { padding: 28px 30px !important; }
+.crm-history-page, .crm-tasks-page, .crm-settings-page { margin-left: 248px !important; min-height: 100vh; background: var(--paper) !important; }
+
+.crm-card, .crm-history-toolbar, .crm-history-table-wrap, .crm-tasks-toolbar, .crm-tasks-table-wrap,
+.crm-settings-card, .report-summary article, .report-chart-card, .cdm-card {
+  background: #fff !important; border: 1px solid var(--line) !important; border-radius: 16px !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08) !important;
+}
+.crm-card { padding: 20px !important; }
+
+input, select, textarea, .crm-filter-btn, .crm-page-btn {
+  border-color: #79747e !important; background: #fff !important; color: var(--ink-soft) !important; border-radius: 4px !important;
+}
+input:focus, select:focus, textarea:focus { border-color: #6750a4 !important; box-shadow: 0 0 0 1px #6750a4 !important; outline: none; }
+
+.crm-add-btn, .crm-add-task-btn, .crm-btn-save, .crm-refresh-btn, .crm-btn-confirm,
+.crm-dialog-actions .save, .cdm-add-btn, .cdm-btn-submit {
+  background: #6750a4 !important; color: #fff !important; border: 0 !important; border-radius: 20px !important;
+  font-weight: 600 !important; box-shadow: none !important;
+}
+.crm-add-btn:hover, .crm-add-task-btn:hover, .crm-btn-save:hover, .crm-refresh-btn:hover,
+.crm-btn-confirm:hover, .cdm-add-btn:hover { background: #4f378b !important; }
+.crm-btn-cancel, .crm-dialog-actions .cancel, .cdm-btn-cancel { border-radius: 20px !important; }
+
+.crm-status-tabs, .crm-tasks-tabs { gap: 8px !important; }
+.crm-status-tab, .crm-tasks-tab { clip-path: none !important; margin: 0 !important; border: 1px solid var(--line) !important; border-radius: 20px !important; }
+.crm-status-tab.active, .crm-tasks-tab.active { background: #eaddff !important; color: #4f378b !important; border-color: transparent !important; }
+.crm-status-tab.active .crm-tab-count { color: #4f378b !important; }
+
+.crm-table-wrap, .crm-history-table-wrap, .crm-tasks-table-wrap { border: 1px solid var(--line) !important; border-radius: 12px !important; overflow: auto; }
+.crm-table th, .crm-history-table th, .crm-tasks-table th { background: #f7f2fa !important; color: #49454f !important; border-color: var(--line) !important; }
+.crm-table td, .crm-history-table td, .crm-tasks-table td { border-color: var(--line) !important; }
+.crm-table tbody tr:hover, .crm-history-table tbody tr:hover, .crm-tasks-table tbody tr:hover { background: #f7f2fa !important; }
+.crm-name-link { color: #6750a4 !important; }
+.crm-action-btn, .crm-icon-btn, .crm-task-action-btn, .cdm-icon-btn { border-radius: 50% !important; }
+
+.crm-modal-overlay, .crm-dialog-overlay, .cdm-overlay, .cdm-subdialog-overlay { background: rgba(29,27,32,.55) !important; backdrop-filter: blur(2px); }
+.crm-modal, .crm-task-modal, .crm-confirm-modal, .crm-customer-form, .crm-confirm-dialog,
+.cdm-modal, .cdm-subdialog, .cdm-calls-panel { border-radius: 28px !important; background: #fff !important; box-shadow: 0 8px 24px rgba(0,0,0,.18) !important; }
+
+@media (max-width: 899px) {
+  body { padding-bottom: 68px; }
+  .crm, .crm-reports { padding-left: 0 !important; }
+  .crm-history-page, .crm-tasks-page, .crm-settings-page { margin-left: 0 !important; }
+  .crm-container, .reports-page, .crm-history-page, .crm-tasks-page, .crm-settings-page { padding: 16px !important; }
+}
